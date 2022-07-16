@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour
 {
+    public static Dice instance;
 
     //array of dice sides sprites
     public Sprite[] diceSides;
@@ -12,6 +13,14 @@ public class Dice : MonoBehaviour
     SpriteRenderer sr;
 
     bool isRolling;
+
+    public int maxRoll = 2;
+    public int currRoll;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +32,7 @@ public class Dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!isRolling)
+        if (!isRolling && currRoll < maxRoll)
         {
             StartCoroutine("RollDice");
             isRolling = true;
@@ -53,6 +62,7 @@ public class Dice : MonoBehaviour
 
         newDiceNumber = randomDiceSide + 1;
         isRolling = false;
+        currRoll++;
         LetterManager.instance.RemoveLetters(newDiceNumber);
         Debug.Log(newDiceNumber);
     }

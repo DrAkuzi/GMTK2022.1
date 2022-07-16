@@ -32,14 +32,31 @@ public class GameManager : MonoBehaviour
         wordAsChars = word.word.ToCharArray(0, str.Length);
     }
 
+    /// <summary>
+    /// check subsequent letter is the same as current letter
+    /// </summary>
+    /// <param name="letter"></param>
+    /// <returns></returns>
+    public bool ConsistDuplicateLetter(string letter)
+    {
+        for(int i = currBlank + 1; i < 5; i++)
+        {
+            if (wordAsChars[i].ToString() == letter)
+                return true;
+        }
+
+        return false;
+    }
+
     public bool CheckLetter(string letter)
     {
         if (letter != wordAsChars[currBlank].ToString())
         {
-            Hangman.instance.RevealPart();
+            Hangman.instance.RevealPart(Dice.instance.currRoll);
             return false;
         }
 
+        Dice.instance.currRoll = 0;
         currBlank++;
         return true;
     }

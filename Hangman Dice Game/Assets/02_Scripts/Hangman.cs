@@ -32,12 +32,15 @@ public class Hangman : MonoBehaviour
         
     }
 
-    public void RevealPart()
+    public void RevealPart(int toReveal)
     {
         if (total >= parts.Count)
             return;
 
-        parts[total].SetActive(true);
-        total++;
+        for (int i = 0; i < toReveal; i++)
+        {
+            parts[total].SetActive(true);
+            total++;
+        }
     }
 }

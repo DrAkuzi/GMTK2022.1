@@ -22,12 +22,6 @@ public class PlayerInput : MonoBehaviour
     void Update()
     {
         GetKeyboardInput();
-        
-        //temp
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Hangman.instance.RevealPart();
-        }
     }
 
     void GetKeyboardInput()
@@ -51,7 +45,7 @@ public class PlayerInput : MonoBehaviour
                     ascii -= caps;
                 //print(ascii);
                 //pass values here
-                LetterManager.instance.DisplayLetter(Convert.ToChar(ascii).ToString());
+                LetterManager.instance.LetterPressed(Convert.ToChar(ascii).ToString());
             }
             catch
             {

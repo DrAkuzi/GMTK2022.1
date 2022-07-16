@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WordGenerator : MonoBehaviour
+public class WordGenerator 
 {
 
     private static string[] wordList = { "apple", "bread", "honey", "viola", "piano", "thorn" };

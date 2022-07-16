@@ -5,7 +5,7 @@ using UnityEngine;
 public class WordGenerator 
 {
 
-    private static string[] wordList = { "apple", "bread", "honey", "viola", "piano", "thorn" };
+    private static string[] wordList = { "APPLE", "BREAD", "HONEY", "VIOLA", "PIANO", "THORN" };
 
     public static string GetRandomWord()
     {

@@ -5,46 +5,43 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    
-    public List<Word> words;
-    public GameObject[] tilesWord;
+    public static GameManager instance;
+
     string str = "Books";
     public char[] wordAsChars;
+
+    int currBlank;
+
+    private void Awake()
+    {
+        instance = this;
+        ChooseWord();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-       ChooseWord();
+       
     }
 
     public void ChooseWord() //generates a word randomly from list
     {
         Word word = new Word(WordGenerator.GetRandomWord());
         Debug.Log(word.word);
-        SetTiles(word.word);
+        //convert word string into an array of separate characters
+        wordAsChars = word.word.ToCharArray(0, str.Length);
     }
 
-    public void SetTiles(string selectedWord)
+    public bool CheckLetter(string letter)
     {
-        Debug.Log("selected word is " + selectedWord);
-
-        //convert word string into an array of separate characters
-        wordAsChars = selectedWord.ToCharArray(0, str.Length);
-        //create space for the array 
-        tilesWord = new GameObject[selectedWord.Length];
-        //populating only word's letter tiles into this array
-        for(int i=0; i<wordAsChars.Length; i++)
+        if (letter != wordAsChars[currBlank].ToString())
         {
-            //each letter is converted to a string so it can be used in GameObject.Find
-            string letter = "" + wordAsChars[i];
-            //find the gameobject that is of the same letter
-            //tilesWord[i] = GameObject.Find(letter);
-
-            tilesWord[i] = new GameObject();
-            tilesWord[i].AddComponent<TextMeshProUGUI>().text = wordAsChars[i].ToString();
-
-            //can create a list of gameobjects for the tiles & it will be assigned in order
+            Hangman.instance.RevealPart();
+            return false;
         }
+
+        currBlank++;
+        return true;
     }
 
     // Update is called once per frame

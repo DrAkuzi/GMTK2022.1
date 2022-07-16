@@ -53,7 +53,7 @@ public class Dice : MonoBehaviour
 
         newDiceNumber = randomDiceSide + 1;
         isRolling = false;
-
+        LetterManager.instance.RemoveLetters(newDiceNumber);
         Debug.Log(newDiceNumber);
     }
 

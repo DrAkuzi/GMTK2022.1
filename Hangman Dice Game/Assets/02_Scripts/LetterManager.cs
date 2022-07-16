@@ -23,7 +23,7 @@ public class LetterManager : MonoBehaviour
     void Start()
     {
         SetLetters();
-        RemoveLetters(Random.Range(1, 7));
+        //RemoveLetters(Random.Range(1, 7));
     }
 
     void SetLetters()
@@ -47,6 +47,7 @@ public class LetterManager : MonoBehaviour
 
     public void RemoveLetters(int total)
     {
+        ResetLetterState();
         removedLetters.Clear();
 
         List<TextMeshProUGUI> temp = new List<TextMeshProUGUI>();
@@ -65,6 +66,7 @@ public class LetterManager : MonoBehaviour
 
     public void ResetLetterState()
     {
+
         for(int i = 0; i < letters.Length; i++)
         {
             letters[i].GetComponent<Button>().interactable = true;
@@ -83,9 +85,12 @@ public class LetterManager : MonoBehaviour
         if (currBlank >= blanks.Length || removedLetters.Contains(letter))
             return;
 
-        blanks[currBlank].text = letter;
-        currBlank++;
-        ResetLetterState();
-        RemoveLetters(Random.Range(1, 7));
+        if (GameManager.instance.CheckLetter(letter))
+        {
+            blanks[currBlank].text = letter;
+            currBlank++;
+        }
+        
+        //RemoveLetters(Random.Range(1, 7));
     }
 }

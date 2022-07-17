@@ -14,7 +14,7 @@ public class Dice : MonoBehaviour
 
     bool isRolling;
 
-    public int maxRoll = 2;
+    public int maxRoll = 3;
     public int currRoll;
 
     private void Awake()

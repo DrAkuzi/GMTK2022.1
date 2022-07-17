@@ -7,10 +7,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    string str = "Books";
+    string str = "APPLE";
     public char[] wordAsChars;
+    public Dictionary<int, string> wordList = new Dictionary<int, string>();
 
-    int currBlank;
+    public int blanksLeft { get { return wordList.Count; } }
 
     private void Awake()
     {
@@ -29,7 +30,11 @@ public class GameManager : MonoBehaviour
         Word word = new Word(WordGenerator.GetRandomWord());
         Debug.Log(word.word);
         //convert word string into an array of separate characters
-        wordAsChars = word.word.ToCharArray(0, str.Length);
+        wordAsChars = word.word.ToCharArray(0, word.word.Length);
+        for(int i = 0; i < word.word.Length; i++)
+        {
+            wordList.Add(i, wordAsChars[i].ToString());
+        }
     }
 
     /// <summary>
@@ -39,26 +44,41 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public bool ConsistDuplicateLetter(string letter)
     {
-        for(int i = currBlank + 1; i < 5; i++)
+        int count = 0;
+
+        foreach (var key in wordList.Keys)
         {
-            if (wordAsChars[i].ToString() == letter)
-                return true;
+            if (wordList[key] == letter)
+            {
+                count++;
+            }
         }
 
-        return false;
+        return count > 1;
     }
 
-    public bool CheckLetter(string letter)
+    public bool CheckLetter(string letter, out int pos)
     {
-        if (letter != wordAsChars[currBlank].ToString())
+        pos = -1;
+        foreach (var key in wordList.Keys)
         {
-            Hangman.instance.RevealPart(Dice.instance.currRoll);
-            return false;
+            if(wordList[key] == letter)
+            {
+                pos = key;
+            }
         }
 
-        Dice.instance.currRoll = 0;
-        currBlank++;
-        return true;
+        if (pos >= 0)
+        {
+            wordList.Remove(pos);
+            //Dice.instance.currRoll = 0;
+            return true;
+        }
+        else
+        {
+            Hangman.instance.RevealPart();
+            return false;
+        }
     }
 
     // Update is called once per frame

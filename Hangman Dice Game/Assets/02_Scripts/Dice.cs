@@ -16,6 +16,7 @@ public class Dice : MonoBehaviour
 
     public int maxRoll = 3;
     public int currRoll;
+    int totalRolls;
 
     private void Awake()
     {
@@ -32,10 +33,15 @@ public class Dice : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!isRolling && currRoll < maxRoll)
-        {
+        if (!isRolling && currRoll <= maxRoll)
+        {   
             StartCoroutine("RollDice");
             isRolling = true;
+
+            if (currRoll > 0)
+            {
+                Hangman.instance.RevealPart();
+            }
         }
     }
 
@@ -63,8 +69,10 @@ public class Dice : MonoBehaviour
         newDiceNumber = randomDiceSide + 1;
         isRolling = false;
         currRoll++;
+        totalRolls++;
         LetterManager.instance.RemoveLetters(newDiceNumber);
-        Debug.Log(newDiceNumber);
+        Debug.Log("dice rolled " + newDiceNumber);
+        Debug.Log("current roll count is: " + currRoll);
     }
 
     

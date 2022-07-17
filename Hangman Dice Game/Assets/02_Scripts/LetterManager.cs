@@ -146,10 +146,6 @@ public class LetterManager : MonoBehaviour
         {
             blanks[currBlank].text = letter;
             currBlank++;
-            
-            ResetLetterState();
-            removedLetters.Clear();
-            currLetters.Clear();           
         }
     }
 }

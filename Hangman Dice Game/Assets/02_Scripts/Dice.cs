@@ -65,7 +65,12 @@ public class Dice : MonoBehaviour
             //duration where each side is showing
             yield return new WaitForSeconds(0.1f);
         }
-
+        if (currRoll < 1)
+        {
+            randomDiceSide = Random.Range(2, 6);
+            sr.sprite = diceSides[randomDiceSide];
+            Debug.Log("player advantage");
+        }
         newDiceNumber = randomDiceSide + 1;
         isRolling = false;
         currRoll++;

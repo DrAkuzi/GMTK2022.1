@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 00b72ecfc421fdd4c8991b0425d7e769
   - enabled: 1
-    path: Assets/Scenes/raziTest.unity
-    guid: 717c7f23d5952854793013f9822dbfb8
+    path: Assets/Scenes/PlayScene.unity
+    guid: ce35905c430a179458babca68e192ce0
   m_configObjects: {}

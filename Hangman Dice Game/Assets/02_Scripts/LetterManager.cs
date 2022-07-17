@@ -36,6 +36,8 @@ public class LetterManager : MonoBehaviour
             colorVar.highlightedColor = new Color(0.3058f, 1f, 0.4392f);
             b.colors = colorVar;
             b.onClick.AddListener(delegate { LetterPressed(b); });
+
+            currLetters.Add(letters[i]);
         }
     }
 
@@ -47,16 +49,6 @@ public class LetterManager : MonoBehaviour
 
     public void RemoveLetters(int total)
     {
-        if (Dice.instance.currRoll == 1)
-        {
-            ResetLetterState();
-            removedLetters.Clear();
-            currLetters.Clear();
-
-            for (int i = 0; i < letters.Length; i++)
-                currLetters.Add(letters[i]);
-        }
-
         for(int i = 0; i < total; i++)
         {
             int r = Random.Range(0, currLetters.Count);
@@ -102,18 +94,24 @@ public class LetterManager : MonoBehaviour
         {
             letters[i].GetComponent<Button>().interactable = true;
         }
+
+        removedLetters.Clear();
+        currLetters.Clear();
+
+        for (int i = 0; i < letters.Length; i++)
+            currLetters.Add(letters[i]);
     }
 
     //for button
     public void LetterPressed(Button b)
     {
-        if (GameManager.instance.blanksLeft == 0)
+        if (GameManager.instance.blanksLeft == 0 || !GameManager.instance.GetGameState)
             return;
 
         string letter = b.GetComponent<TextMeshProUGUI>().text;
 
-        if (!GameManager.instance.ConsistDuplicateLetter(letter))
-            b.interactable = false;
+        b.interactable = false;
+        removedLetters.Add(letter);
 
         DisplayLetter(letter);
     }
@@ -124,15 +122,14 @@ public class LetterManager : MonoBehaviour
         if (GameManager.instance.blanksLeft == 0 || removedLetters.Contains(letter))
             return;
 
-        if (!GameManager.instance.ConsistDuplicateLetter(letter))
+        for (int i = 0; i < currLetters.Count; i++)
         {
-            for (int i = 0; i < currLetters.Count; i++)
+            if (currLetters[i].text == letter)
             {
-                if (currLetters[i].text == letter)
-                {
-                    currLetters[i].GetComponent<Button>().interactable = false;
-                    break;
-                }
+                //print("removing: " + currLetters[i].text);
+                currLetters[i].GetComponent<Button>().interactable = false;
+                removedLetters.Add(currLetters[i].text);
+                break;
             }
         }
 
@@ -142,9 +139,12 @@ public class LetterManager : MonoBehaviour
     void DisplayLetter(string letter)
     {
         int blankPos = 0;
-        if (GameManager.instance.CheckLetter(letter, out blankPos))
+        do
         {
-            blanks[blankPos].text = letter;
-        }
+            if (GameManager.instance.CheckLetter(letter, out blankPos))
+            {
+                blanks[blankPos].text = letter;
+            }
+        } while (GameManager.instance.ConsistDuplicateLetter(letter));
     }
 }

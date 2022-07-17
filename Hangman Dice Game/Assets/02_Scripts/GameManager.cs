@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,9 +14,32 @@ public class GameManager : MonoBehaviour
 
     public int blanksLeft { get { return wordList.Count; } }
 
+    int currLife;
+    int maxLife = 10;
+    public int GetMaxLife { get { return maxLife; } }
+
+    bool gameIsActive = true;
+    public bool GetGameState { get { return gameIsActive; } }
+
+    int wordsGuessed;
+    int lettersGuessed;
+    int totalRolls;
+    public int MainMenuIndex;
+
+    [SerializeField] GameObject ResultPage;
+    [SerializeField] TextMeshProUGUI[] Stats;
+    [SerializeField] GameObject[] ResultTexts;
+
     private void Awake()
     {
         instance = this;
+
+        currLife = maxLife;
+
+        wordsGuessed = PlayerPrefs.GetInt("words");
+        lettersGuessed = PlayerPrefs.GetInt("letters");
+        totalRolls = PlayerPrefs.GetInt("rolls");
+
         ChooseWord();
     }
 
@@ -54,12 +78,14 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        return count > 1;
+        return count > 0;
     }
 
     public bool CheckLetter(string letter, out int pos)
     {
+        //print("check");
         pos = -1;
+        lettersGuessed++;
         foreach (var key in wordList.Keys)
         {
             if(wordList[key] == letter)
@@ -71,12 +97,21 @@ public class GameManager : MonoBehaviour
         if (pos >= 0)
         {
             wordList.Remove(pos);
-            //Dice.instance.currRoll = 0;
+            
+            if(wordList.Count == 0)
+                Win();
+
             return true;
         }
         else
         {
+            //print("wrong");
             Hangman.instance.RevealPart();
+            currLife--;
+
+            if (currLife <= 0)
+                Lose();
+
             return false;
         }
     }
@@ -85,5 +120,46 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    void Win()
+    {
+        ResultPage.SetActive(true);
+        wordsGuessed++;
+        PlayerPrefs.SetInt("words", wordsGuessed);
+        PlayerPrefs.SetInt("letters", lettersGuessed);
+        totalRolls += Dice.instance.currRoll;
+        PlayerPrefs.SetInt("rolls", totalRolls);
+        gameIsActive = false;
+        UpdateStatsText();
+        ResultTexts[0].SetActive(true);
+    }
+
+    void Lose()
+    {
+        ResultPage.SetActive(true);
+        PlayerPrefs.SetInt("letters", lettersGuessed);
+        totalRolls += Dice.instance.currRoll;
+        PlayerPrefs.SetInt("rolls", totalRolls);
+        gameIsActive = false;
+        UpdateStatsText();
+        ResultTexts[1].SetActive(true);
+    }
+
+    void UpdateStatsText()
+    {
+        Stats[0].text = "Words guessed: " + PlayerPrefs.GetInt("words").ToString();
+        Stats[1].text = "Letters guessed: " + PlayerPrefs.GetInt("letters").ToString();
+        Stats[2].text = "No. of rolls: " + PlayerPrefs.GetInt("rolls").ToString();
+    }
+
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene(MainMenuIndex);
+    }
+
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

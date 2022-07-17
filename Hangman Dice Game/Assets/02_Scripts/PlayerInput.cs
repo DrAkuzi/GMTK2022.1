@@ -21,7 +21,8 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetKeyboardInput();
+        if(GameManager.instance.GetGameState)
+            GetKeyboardInput();
     }
 
     void GetKeyboardInput()

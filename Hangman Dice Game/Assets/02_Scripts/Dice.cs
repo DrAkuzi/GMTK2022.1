@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Dice : MonoBehaviour
 {
@@ -8,15 +10,16 @@ public class Dice : MonoBehaviour
 
     //array of dice sides sprites
     public Sprite[] diceSides;
+    [SerializeField] TextMeshProUGUI text;
 
     //ref to sprite renderer to change sprites
-    SpriteRenderer sr;
+    //SpriteRenderer sr;
+    Image image;
 
     bool isRolling;
 
     public int maxRoll = 3;
     public int currRoll;
-    int totalRolls;
 
     private void Awake()
     {
@@ -26,15 +29,20 @@ public class Dice : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sr = GetComponent<SpriteRenderer>();
+        //sr = GetComponent<SpriteRenderer>();
+        image = GetComponent<Image>();
 
         //diceSides = 01_Sprites.LoadAll<Sprite>("Placeholder/");        
     }
 
-    private void OnMouseDown()
+    public void Roll()
     {
-        if (!isRolling && currRoll <= maxRoll)
-        {   
+        if (!GameManager.instance.GetGameState)
+            return;
+
+        if (!isRolling && currRoll < maxRoll)
+        {
+            text.text = "";
             StartCoroutine("RollDice");
             isRolling = true;
 
@@ -60,7 +68,7 @@ public class Dice : MonoBehaviour
             randomDiceSide = Random.Range(0, 6);
 
             //set sprite to the corresponding dice face according to its value
-            sr.sprite = diceSides[randomDiceSide];
+            image.sprite = diceSides[randomDiceSide];
 
             //duration where each side is showing
             yield return new WaitForSeconds(0.1f);
@@ -68,19 +76,37 @@ public class Dice : MonoBehaviour
         if (currRoll < 1)
         {
             randomDiceSide = Random.Range(2, 6);
-            sr.sprite = diceSides[randomDiceSide];
-            Debug.Log("player advantage");
+            image.sprite = diceSides[randomDiceSide];
+            //Debug.Log("player advantage");
         }
         newDiceNumber = randomDiceSide + 1;
         isRolling = false;
         currRoll++;
-        totalRolls++;
+        ChangeText();
         LetterManager.instance.RemoveLetters(newDiceNumber);
-        Debug.Log("dice rolled " + newDiceNumber);
-        Debug.Log("current roll count is: " + currRoll);
+        //Debug.Log("dice rolled " + newDiceNumber);
+        //Debug.Log("current roll count is: " + currRoll);
     }
 
-    
+    void ChangeText()
+    {
+        string tex = "";
+        switch(currRoll)
+        {
+            case 1:
+            case 2:
+                tex = "Pay with life for another roll";
+                break;
+
+            case 3:
+                tex = "Roll limit reached :(";
+                break;
+
+        }
+
+        text.text = tex;
+    }
+
     // Update is called once per frame
     void Update()
     {

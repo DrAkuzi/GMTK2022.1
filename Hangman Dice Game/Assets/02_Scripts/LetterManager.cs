@@ -10,7 +10,6 @@ public class LetterManager : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI[] blanks;
     [SerializeField] TextMeshProUGUI[] letters;
-    int currBlank;
     List<string> removedLetters = new List<string>();
     List<TextMeshProUGUI> currLetters = new List<TextMeshProUGUI>();
 
@@ -108,7 +107,7 @@ public class LetterManager : MonoBehaviour
     //for button
     public void LetterPressed(Button b)
     {
-        if (currBlank >= blanks.Length)
+        if (GameManager.instance.blanksLeft == 0)
             return;
 
         string letter = b.GetComponent<TextMeshProUGUI>().text;
@@ -122,7 +121,7 @@ public class LetterManager : MonoBehaviour
     //for keyboard
     public void LetterPressed(string letter)
     {
-        if (currBlank >= blanks.Length || removedLetters.Contains(letter))
+        if (GameManager.instance.blanksLeft == 0 || removedLetters.Contains(letter))
             return;
 
         if (!GameManager.instance.ConsistDuplicateLetter(letter))
@@ -142,10 +141,10 @@ public class LetterManager : MonoBehaviour
 
     void DisplayLetter(string letter)
     {
-        if (GameManager.instance.CheckLetter(letter))
+        int blankPos = 0;
+        if (GameManager.instance.CheckLetter(letter, out blankPos))
         {
-            blanks[currBlank].text = letter;
-            currBlank++;
+            blanks[blankPos].text = letter;
         }
     }
 }

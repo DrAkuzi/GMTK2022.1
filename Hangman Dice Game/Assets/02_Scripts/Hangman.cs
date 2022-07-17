@@ -7,6 +7,7 @@ public class Hangman : MonoBehaviour
     List<GameObject> parts = new List<GameObject>();
 
     int total;
+    int max;
 
     public static Hangman instance;
 
@@ -19,6 +20,9 @@ public class Hangman : MonoBehaviour
             parts.Add(transform.GetChild(i).gameObject);
             transform.GetChild(i).gameObject.SetActive(false);
         }
+
+        max = Random.Range(6, parts.Count + 1);
+        //print("max parts: " + max);
     }
     // Start is called before the first frame update
     void Start()
@@ -32,15 +36,12 @@ public class Hangman : MonoBehaviour
         
     }
 
-    public void RevealPart(int toReveal)
+    public void RevealPart()
     {
-        if (total >= parts.Count)
+        if (total >= max)
             return;
 
-        for (int i = 0; i < toReveal; i++)
-        {
-            parts[total].SetActive(true);
-            total++;
-        }
+        parts[total].SetActive(true);
+        total++;
     }
 }

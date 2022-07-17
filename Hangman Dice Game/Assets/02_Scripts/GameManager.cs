@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public int blanksLeft { get { return wordList.Count; } }
 
     int currLife;
-    int maxLife = 10;
+    int maxLife;
     public int GetMaxLife { get { return maxLife; } }
 
     bool gameIsActive = true;
@@ -24,21 +24,23 @@ public class GameManager : MonoBehaviour
     int wordsGuessed;
     int lettersGuessed;
     int totalRolls;
+    int currStreak;
+    int longestStreak;
     public int MainMenuIndex;
 
     [SerializeField] GameObject ResultPage;
-    [SerializeField] TextMeshProUGUI[] Stats;
     [SerializeField] GameObject[] ResultTexts;
+    [SerializeField] GameObject[] ToHide;
 
     private void Awake()
     {
         instance = this;
 
-        currLife = maxLife;
-
         wordsGuessed = PlayerPrefs.GetInt("words");
         lettersGuessed = PlayerPrefs.GetInt("letters");
         totalRolls = PlayerPrefs.GetInt("rolls");
+        currStreak = PlayerPrefs.GetInt("current_streak");
+        longestStreak = PlayerPrefs.GetInt("longest_streak");
 
         ChooseWord();
     }
@@ -46,7 +48,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+        maxLife = Hangman.instance.GetPartsCount;
+        currLife = maxLife;
     }
 
     public void ChooseWord() //generates a word randomly from list
@@ -130,9 +133,14 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("letters", lettersGuessed);
         totalRolls += Dice.instance.currRoll;
         PlayerPrefs.SetInt("rolls", totalRolls);
+        longestStreak++;
+        PlayerPrefs.SetInt("longest_streak", longestStreak);
+        currStreak++;
+        PlayerPrefs.SetInt("current_streak", currStreak);
         gameIsActive = false;
-        UpdateStatsText();
         ResultTexts[0].SetActive(true);
+        for (int i = 0; i < ToHide.Length; i++)
+            ToHide[i].SetActive(false);
     }
 
     void Lose()
@@ -141,16 +149,12 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("letters", lettersGuessed);
         totalRolls += Dice.instance.currRoll;
         PlayerPrefs.SetInt("rolls", totalRolls);
+        currStreak = 0;
+        PlayerPrefs.SetInt("current_streak", currStreak);
         gameIsActive = false;
-        UpdateStatsText();
         ResultTexts[1].SetActive(true);
-    }
-
-    void UpdateStatsText()
-    {
-        Stats[0].text = "Words guessed: " + PlayerPrefs.GetInt("words").ToString();
-        Stats[1].text = "Letters guessed: " + PlayerPrefs.GetInt("letters").ToString();
-        Stats[2].text = "No. of rolls: " + PlayerPrefs.GetInt("rolls").ToString();
+        for (int i = 0; i < ToHide.Length; i++)
+            ToHide[i].SetActive(false);
     }
 
     public void GoToMenu()

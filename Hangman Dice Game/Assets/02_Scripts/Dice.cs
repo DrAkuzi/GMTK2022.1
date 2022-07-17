@@ -21,9 +21,12 @@ public class Dice : MonoBehaviour
     public int maxRoll = 3;
     public int currRoll;
 
+    AudioSource audio;
+
     private void Awake()
     {
         instance = this;
+        audio = GetComponent<AudioSource>();
     }
 
     // Start is called before the first frame update
@@ -55,6 +58,7 @@ public class Dice : MonoBehaviour
 
     private IEnumerator RollDice()
     {
+        audio.PlayOneShot(audio.clip);
         //variable to contain random dice side number while rolling. needs to be assigned so let it be 0 initially
         int randomDiceSide = 0;
 

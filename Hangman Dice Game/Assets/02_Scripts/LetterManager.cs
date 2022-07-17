@@ -13,10 +13,11 @@ public class LetterManager : MonoBehaviour
     List<string> removedLetters = new List<string>();
     List<TextMeshProUGUI> currLetters = new List<TextMeshProUGUI>();
 
+    AudioSource audio;
     private void Awake()
     {
         instance = this;
-        
+        audio = GetComponent<AudioSource>();
     }
 
     // Start is called before the first frame update
@@ -33,7 +34,10 @@ public class LetterManager : MonoBehaviour
             letters[i].text = letter;
             Button b = letters[i].gameObject.AddComponent<Button>();
             ColorBlock colorVar = b.colors;
-            colorVar.highlightedColor = new Color(0.3058f, 1f, 0.4392f);
+            colorVar.highlightedColor = new Color(0.5568f, 0.5568f, 0.5568f);
+            Color temp = colorVar.disabledColor;
+            temp.a = 0.2117f;
+            colorVar.disabledColor = temp;
             b.colors = colorVar;
             b.onClick.AddListener(delegate { LetterPressed(b); });
 
@@ -77,6 +81,9 @@ public class LetterManager : MonoBehaviour
             {
                 //print("removing: " + currLetters[r].text);
                 currLetters[r].GetComponent<Button>().interactable = false;
+                Color temp = Color.white;
+                temp.a = 0.1411f;
+                currLetters[r].GetComponentInChildren<Image>().color = temp;
                 removedLetters.Add(currLetters[r].text);
                 currLetters.RemoveAt(r);
             }
@@ -111,6 +118,9 @@ public class LetterManager : MonoBehaviour
         string letter = b.GetComponent<TextMeshProUGUI>().text;
 
         b.interactable = false;
+        Color temp = Color.white;
+        temp.a = 0.1411f;
+        b.GetComponentInChildren<Image>().color = temp;
         removedLetters.Add(letter);
 
         DisplayLetter(letter);
@@ -128,6 +138,9 @@ public class LetterManager : MonoBehaviour
             {
                 //print("removing: " + currLetters[i].text);
                 currLetters[i].GetComponent<Button>().interactable = false;
+                Color temp = Color.white;
+                temp.a = 0.1411f;
+                currLetters[i].GetComponentInChildren<Image>().color = temp;
                 removedLetters.Add(currLetters[i].text);
                 break;
             }
@@ -139,6 +152,7 @@ public class LetterManager : MonoBehaviour
     void DisplayLetter(string letter)
     {
         int blankPos = 0;
+        audio.PlayOneShot(audio.clip);
         do
         {
             if (GameManager.instance.CheckLetter(letter, out blankPos))
